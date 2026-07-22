@@ -1,0 +1,39 @@
+[package]
+name = "pgspawn"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.94"
+description = "Durable PostgreSQL-backed background jobs for Tokio"
+documentation = "https://docs.rs/pgspawn"
+repository = "https://github.com/christian-smith/pgspawn"
+license = "MIT"
+readme = "README.md"
+include = ["src/**", "tests/**", "migrations/**", "Cargo.lock", "CHANGELOG.md", "LICENSE", "README.md"]
+keywords = ["background-jobs", "postgresql", "queue", "sqlx", "tokio"]
+categories = ["asynchronous", "database"]
+
+[dependencies]
+jiff = "0.2"
+jiff-sqlx = { version = "0.2", features = ["postgres"] }
+serde = "1"
+serde_json = "1"
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "postgres", "uuid", "macros", "migrate", "json"] }
+thiserror = "2"
+tokio = { version = "1", features = ["macros", "rt", "sync", "time"] }
+tracing = "0.1"
+uuid = { version = "1", features = ["v4"] }
+
+# Applications normally select a TLS backend through SQLx; these features provide optional passthroughs.
+[features]
+tls-rustls = ["sqlx/tls-rustls"]
+tls-native-tls = ["sqlx/tls-native-tls"]
+
+[dev-dependencies]
+serde = { version = "1", features = ["derive"] }
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "uuid"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal", "sync", "time"] }
+uuid = { version = "1", features = ["serde", "v4"] }
+
+# TLS passthroughs do not change the public API, so docs.rs builds without them.
+[package.metadata.docs.rs]
+features = []
